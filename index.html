@@ -370,7 +370,6 @@
 
 <div class="audiobar" id="audiobar">
   <button class="ab-play" id="ab-play" aria-label="Play">▶</button>
-  <button class="ab-skip" id="ab-next" aria-label="Next track">⏭</button>
   <div class="ab-meta">
     <div class="ab-track" id="ab-title">Why Not</div>
     <div class="ab-sub">The Sweet Life Society</div>
@@ -651,9 +650,7 @@
   // ---------- fixed top audio bar ----------
   (function(){
     var tracks = [
-      { title:'Why Not',         src:'assets/audio/why-not.mp3' },
-      { title:'Down Low',        src:'assets/audio/DOWN LOW MIX.mp3' },
-      { title:'Stand Rise Speak',src:'assets/audio/STAND RISE SPEAK ORIGINAL.mp3' }
+      { title:'Why Not',         src:'assets/audio/why-not.mp3' }
     ];
     var i = 0;
     var audio = new Audio(tracks[0].src);
@@ -684,7 +681,7 @@
     btn.addEventListener('click', function(){
       if (audio.paused){ play(); } else { audio.pause(); btn.textContent='▶'; }
     });
-    nextBtn.addEventListener('click', function(){ load(i + 1, true); });
+    if (nextBtn) nextBtn.addEventListener('click', function(){ load(i + 1, true); });
     audio.addEventListener('timeupdate', function(){
       if (audio.duration){
         var pct = (audio.currentTime/audio.duration)*100;
@@ -696,7 +693,9 @@
     audio.addEventListener('loadedmetadata', function(){
       time.textContent = '0:00 / ' + fmt(audio.duration);
     });
-    audio.addEventListener('ended', function(){ load(i + 1, true); });
+    audio.addEventListener('ended', function(){
+      if (tracks.length > 1) load(i + 1, true); else load(i, false);
+    });
     prog.addEventListener('click', function(e){
       if (!audio.duration) return;
       var r = prog.getBoundingClientRect();
